@@ -7,7 +7,7 @@
     <style>
         /* --- CSS ДИЗАЙН ТА ОБКЛАДИНКА --- */
         body {
-            background: #0f0f12 url('https://i.ibb.co/L5Z5vWd/brick-dark-neon.jpg') repeat;
+            background: #0f0f12 url('bg_banner.png') repeat;
             background-size: 400px 400px;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -44,8 +44,8 @@
 
         .logo-img {
             max-width: 100%; height: auto; border-radius: 15px;
-            border: 3px solid #ffcc00; margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+            border: 3px solid #39ff14; margin-bottom: 15px;
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.5);
         }
 
         .joke-badge {
@@ -120,7 +120,7 @@
     <div id="register-screen" class="screen active-screen">
         <div class="casino-container">
             <div class="joke-badge">⚠️ 100% ПРИКОЛ / СИМУЛЯТОР ⚠️</div>
-            <img src="https://i.ibb.co/68vD1bN/Govno-City-Logo.png" alt="Logo" class="logo-img">
+            <img src="gorilla_main.png" alt="Gorilla Casino Logo" class="logo-img">
             <h2 style="color: #ffcc00; margin: 5px 0;">РЕЄСТРАЦІЯ МАГНАТА</h2>
             <input type="text" id="username-input" placeholder="Твій нік в грі..." maxlength="15">
             <br>
@@ -150,7 +150,7 @@
 
     <div id="game-screen" class="screen">
         <div class="casino-container">
-            <img src="https://i.ibb.co/68vD1bN/Govno-City-Logo.png" alt="Logo" class="logo-img">
+            <img src="gorilla_main.png" alt="Gorilla Casino Logo" class="logo-img">
             
             <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">
                 Трейдер: <span id="user-display"></span> | Рахунок: <span id="card-display"></span> | <span style="color:#ff0055; font-weight:bold;">FUN MODE</span>
@@ -282,7 +282,7 @@
         function playThimbles(n) { updBal(-60); let r=Math.floor(Math.random()*3)+1; if(n===r){ updBal(160); document.getElementById('thimbles-res').innerText="🥛 [💎] 🥛 (Вгадав!)"; }else{ document.getElementById('thimbles-res').innerText="🥛 🥛 [💎] (Пусто!)"; } }
         function playZelSlot() { updBal(-120); const z=['👑','💰','🩲']; let z1=z[Math.floor(Math.random()*3)], z2=z[Math.floor(Math.random()*3)], z3=z[Math.floor(Math.random()*3)]; document.getElementById('zel-res').innerText=`${z1} | ${z2} | ${z3}`; if(z1==='👑'&&z2==='👑'&&z3==='👑') updBal(2500); }
 
-        /* --- СИМУЛЯТОР БІРЖІ АКЦІЙ (30 КОМПАНІЙ) --- */
+        /* --- СИМУЛЯТОР БІРЖІ АКЦІЙ --- */
         const companyNames = [
             "Microsoft", "Google", "Tesla", "Rockstar Games", "Valve", "Epic Games", "Apple", "Sony", "Nintendo", "Ubisoft",
             "EA Sports", "Netflix", "Meta", "Amazon", "SpaceX", "Intel", "AMD", "Nvidia", "Samsung", "CD Projekt Red",
