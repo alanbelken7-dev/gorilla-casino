@@ -7,8 +7,12 @@
     <style>
         /* --- CSS ДИЗАЙН ТА ОБКЛАДИНКА --- */
         body {
-            background: #0f0f12 url('bg_banner.png') repeat;
-            background-size: 400px 400px;
+            background-color: #0b0b0d;
+            background-image: 
+                radial-gradient(at 50% 0%, rgba(57, 255, 20, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(255, 0, 85, 0.1) 0px, transparent 50%),
+                linear-gradient(135deg, #0f0f12 0%, #15151a 100%);
+            background-attachment: fixed;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
             text-align: center;
@@ -120,7 +124,7 @@
     <div id="register-screen" class="screen active-screen">
         <div class="casino-container">
             <div class="joke-badge">⚠️ 100% ПРИКОЛ / СИМУЛЯТОР ⚠️</div>
-            <img src="gorilla_main.png" alt="Gorilla Casino Logo" class="logo-img">
+            <img src="Gemini_Generated_Image_788myt788myt788m.png" alt="Gorilla Casino Logo" class="logo-img">
             <h2 style="color: #ffcc00; margin: 5px 0;">РЕЄСТРАЦІЯ МАГНАТА</h2>
             <input type="text" id="username-input" placeholder="Твій нік в грі..." maxlength="15">
             <br>
@@ -150,7 +154,7 @@
 
     <div id="game-screen" class="screen">
         <div class="casino-container">
-            <img src="gorilla_main.png" alt="Gorilla Casino Logo" class="logo-img">
+            <img src="Gemini_Generated_Image_788myt788myt788m.png" alt="Gorilla Casino Logo" class="logo-img">
             
             <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">
                 Трейдер: <span id="user-display"></span> | Рахунок: <span id="card-display"></span> | <span style="color:#ff0055; font-weight:bold;">FUN MODE</span>
@@ -198,7 +202,7 @@
                     <p style="font-size:13px; color:#39ff14; margin:0;">📈 ОНЛАЙН СИМУЛЯТОР БІРЖІ (Ціни оновлюються кожні 3 сек)</p>
                     <div class="stocks-table-container">
                         <table class="stocks-table">
-                            <thead><tr><th>Компанія</th><th>Ціна (🪙)</th><th>Зміна</th><th>Дія</th></tr></thead>
+                            <thead><tr><th>Компанії</th><th>Ціна (🪙)</th><th>Зміна</th><th>Дія</th></tr></thead>
                             <tbody id="stocks-list"></tbody>
                         </table>
                     </div>
