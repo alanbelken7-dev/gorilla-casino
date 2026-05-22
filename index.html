@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GORILLA CASINO | Simulator & Joke Hub</title>
+    <style>
+        /* --- CSS ДИЗАЙН ТА ОБКЛАДИНКА --- */
+        body {
+            background: #0f0f12 url('https://i.ibb.co/L5Z5vWd/brick-dark-neon.jpg') repeat;
+            background-size: 400px 400px;
+            color: #ffffff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            text-align: center;
+            padding: 0; margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* ЕКРАН ЗАВАНТАЖЕННЯ */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0b0b0d;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 1; transition: opacity 0.4s ease;
+        }
+        .spinner {
+            width: 60px; height: 60px;
+            border: 6px solid #25252b; border-top: 6px solid #39ff14; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .screen { display: none; padding: 20px; }
+        .active-screen { display: block; }
+
+        .casino-container {
+            background: rgba(26, 26, 32, 0.93);
+            backdrop-filter: blur(8px);
+            border: 4px solid #39ff14; border-radius: 20px;
+            max-width: 650px; margin: 20px auto; padding: 25px;
+            box-shadow: 0 0 35px #39ff14;
+        }
+
+        .logo-img {
+            max-width: 100%; height: auto; border-radius: 15px;
+            border: 3px solid #ffcc00; margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
+
+        .joke-badge {
+            background: #ff0055; color: #fff; font-weight: bold; font-size: 12px;
+            padding: 4px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 80%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 2px solid #ff0055; background-color: #000; color: #fff;
+            font-size: 16px; text-align: center;
+        }
+        input:focus, select:focus { outline: none; border-color: #39ff14; }
+
+        .balance-box {
+            font-size: 24px; margin: 15px 0; background: rgba(0,0,0,0.6);
+            padding: 12px; border-radius: 10px; border: 2px solid #ffcc00;
+        }
+        #balance { color: #ffcc00; font-weight: bold; }
+
+        .btn {
+            background: linear-gradient(180deg, #ffcc00, #ff9900); border: none; color: #000;
+            padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 4px #996600; margin: 4px; text-transform: uppercase;
+            transition: 0.1s;
+        }
+        .btn:active { transform: translateY(3px); box-shadow: 0 1px #996600; }
+        .btn:disabled { background: #555 !important; box-shadow: none !important; cursor: not-allowed; color: #888 !important; }
+
+        .game-section {
+            background-color: rgba(11, 11, 13, 0.9); border: 2px solid #444;
+            border-radius: 15px; padding: 15px; margin-top: 15px;
+        }
+        
+        .nav-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 15px; }
+        .tab-btn { background: #222; color: #fff; border: 1px solid #444; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 11px; }
+        .tab-btn.active { background: #ff0055; border-color: #ff0055; font-weight: bold; }
+
+        /* СТИЛІ ІГОР */
+        .slots { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .slot-box { background: #000; border: 2px solid #ff0055; border-radius: 10px; width: 65px; height: 65px; font-size: 38px; display: flex; align-items: center; justify-content: center; }
+        .rocket-zone { background: #050507; border: 2px dashed #39ff14; border-radius: 10px; height: 110px; position: relative; overflow: hidden; }
+        #rocket { font-size: 32px; position: absolute; bottom: 10px; left: 10px; transition: 0.1s linear; }
+        .mines-grid { display: grid; grid-template-columns: repeat(4, 60px); gap: 6px; justify-content: center; margin: 10px 0; }
+        .mine-cell { background: #222; border: 1px solid #ff0055; border-radius: 6px; height: 45px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        
+        /* БІРЖА АКЦІЙ */
+        .stocks-table-container { max-height: 250px; overflow-y: auto; margin-top: 10px; border: 1px solid #333; }
+        .stocks-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #000; text-align: left; }
+        .stocks-table th, .stocks-table td { padding: 8px; border-bottom: 1px solid #222; }
+        .stock-up { color: #39ff14; font-weight: bold; }
+        .stock-down { color: #ff0055; font-weight: bold; }
+
+        /* ЧАТ */
+        .chat-container { background: rgba(20, 20, 24, 0.95); border: 2px solid #ff0055; border-radius: 15px; max-width: 650px; margin: 20px auto; padding: 15px; text-align: left; }
+        .chat-title { color: #ff0055; font-weight: bold; font-size: 13px; margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+        .chat-messages { height: 140px; overflow-y: auto; font-size: 12px; display: flex; flex-direction: column; gap: 5px; }
+        .msg-user { color: #39ff14; font-weight: bold; }
+        .msg-text { color: #ddd; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <h2 style="color: #39ff14; font-family: monospace;">ЗАВАНТАЖЕННЯ ВСЕСВІТУ GORILLA CASINO...</h2>
+        <p style="color: #666;" id="loading-sub">Підключення до бананових хабів...</p>
+        <div class="joke-badge" style="margin-top:20px;">! SIMULATOR / JOKE GAME !</div>
+    </div>
+
+    <div id="register-screen" class="screen active-screen">
+        <div class="casino-container">
+            <div class="joke-badge">⚠️ 100% ПРИКОЛ / СИМУЛЯТОР ⚠️</div>
+            <img src="https://i.ibb.co/68vD1bN/Govno-City-Logo.png" alt="Logo" class="logo-img">
+            <h2 style="color: #ffcc00; margin: 5px 0;">РЕЄСТРАЦІЯ МАГНАТА</h2>
+            <input type="text" id="username-input" placeholder="Твій нік в грі..." maxlength="15">
+            <br>
+            <select id="game-select">
+                <option value="Roblox">ROBLOX Всесвіт 🟥</option>
+                <option value="Brawl Stars">BRAWL STARS Клан 🌟</option>
+                <option value="CS2">CS2 Лобі 🔪</option>
+            </select>
+            <br>
+            <button class="btn" onclick="goToCard()">Далі</button>
+        </div>
+    </div>
+
+    <div id="card-screen" class="screen">
+        <div class="casino-container">
+            <div class="joke-badge">🛡️ БЕЗПЕКА: ЦЕ ЖАРТІВЛИВА КАРТКА</div>
+            <h2 style="color: #ff0055;">💳 ПРИВ'ЯЗКА МЕМ-КАРТКИ</h2>
+            <p style="font-size:13px; color:#aaa;">Введи будь-які 16 вигаданих цифр або натисни кнопку генерації:</p>
+            
+            <input type="text" id="card-input" placeholder="4441 •••• •••• ••••" maxlength="19" oninput="formatCard(this)">
+            <br>
+            <button class="btn" style="background:#222; color:#fff; box-shadow:0 4px #111;" onclick="generateMemeCard()">🎲 Згенерувати номер</button>
+            <br><br>
+            <button class="btn" onclick="startGame()">Увійти в систему</button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="casino-container">
+            <img src="https://i.ibb.co/68vD1bN/Govno-City-Logo.png" alt="Logo" class="logo-img">
+            
+            <div style="font-size: 11px; color: #aaa; margin-bottom: 5px;">
+                Трейдер: <span id="user-display"></span> | Рахунок: <span id="card-display"></span> | <span style="color:#ff0055; font-weight:bold;">FUN MODE</span>
+            </div>
+
+            <div class="balance-box">Баланс: <span id="balance">1000</span> 🪙</div>
+
+            <div class="nav-tabs">
+                <div class="tab-btn active" onclick="switchGame('slots-p', this)">🎰 Слоти</div>
+                <div class="tab-btn" onclick="switchGame('rocket-p', this)">🚀 Ракета</div>
+                <div class="tab-btn" onclick="switchGame('mines-p', this)">⛏️ Міни</div>
+                <div class="tab-btn" onclick="switchGame('case-p', this)">📦 Кейси</div>
+                <div class="tab-btn" onclick="switchGame('wheel-p', this)">🎯 Колесо</div>
+                <div class="tab-btn" onclick="switchGame('flip-p', this)">🪙 Монетка</div>
+                <div class="tab-btn" onclick="switchGame('dice-p', this)">🎲 Кості</div>
+                <div class="tab-btn" onclick="switchGame('bj-p', this)">🃏 Блекджек</div>
+                <div class="tab-btn" onclick="switchGame('hilow-p', this)">📊 Хай-Лоу</div>
+                <div class="tab-btn" onclick="switchGame('limbo-p', this)">🟢 Лімбо</div>
+                <div class="tab-btn" onclick="switchGame('plinko-p', this)">🔺 Плінко</div>
+                <div class="tab-btn" onclick="switchGame('keno-p', this)">🔮 Кено</div>
+                <div class="tab-btn" onclick="switchGame('scratch-p', this)">🧼 Скретч</div>
+                <div class="tab-btn" onclick="switchGame('thimbles-p', this)">🥛 Наперстки</div>
+                <div class="tab-btn" onclick="switchGame('zel-p', this)">👑 Слот Зеля</div>
+                <div class="tab-btn" onclick="switchGame('stocks-p', this)" style="background:#39ff14; color:#000; font-weight:bold;">📈 СТАВКИ НА АКЦІЇ</div>
+            </div>
+
+            <div id="slots-p" class="game-panel" style="display:block;"><div class="game-section"><div class="slots"><div class="slot-box" id="s1">🦍</div><div class="slot-box" id="s2">💎</div><div class="slot-box" id="s3">🦧</div></div><button class="btn" onclick="playSlots()">Крутити (-50)</button><p id="s-res">Удачі!</p></div></div>
+            <div id="rocket-p" class="game-panel" style="display:none;"><div class="game-section"><div class="rocket-zone"><div id="multiplier">1.00x</div><div id="rocket">🚀</div></div><button class="btn" id="r-start" onclick="startRocket()">Злет (-100)</button><button class="btn" id="r-cash" onclick="cashoutRocket()" disabled>Забрати!</button></div></div>
+            <div id="mines-p" class="game-panel" style="display:none;"><div class="game-section"><button class="btn" id="m-start" onclick="startMines()">Почати Міни (-100)</button><button class="btn" id="m-cash" onclick="cashoutMines()" disabled>Забрати куш</button><div class="mines-grid" id="m-board"></div><p id="m-status">Знайди діаманти</p></div></div>
+            <div id="case-p" class="game-panel" style="display:none;"><div class="game-section"><h2 id="c-res">📦 Закритий кейс</h2><button class="btn" onclick="playCase()">Відкрити (-150)</button></div></div>
+            <div id="wheel-p" class="game-panel" style="display:none;"><div class="game-section"><h2 id="w-res">🎯 1.00x</h2><button class="btn" onclick="playWheel()">Крутити (-75)</button></div></div>
+            <div id="flip-p" class="game-panel" style="display:none;"><div class="game-section"><select id="f-choice"><option value="👑">Зеля (х2)</option><option value="🩲">Букмекер (х0)</option></select><br><button class="btn" onclick="playFlip()">Кинути (-100)</button><h2 id="f-res">🪙</h2></div></div>
+            <div id="dice-p" class="game-panel" style="display:none;"><div class="game-section"><button class="btn" onclick="playDice()">Кинути кубик (-80)</button><h2 id="d-res">🎲 ?</h2></div></div>
+            <div id="bj-p" class="game-panel" style="display:none;"><div class="game-section"><p id="bj-score">Твої карти: 0 | Дилер: 0</p><button class="btn" id="bj-start" onclick="startBJ()">Грати (-100)</button><button class="btn" id="bj-hit" onclick="hitBJ()" disabled>Ще карту</button><button class="btn" id="bj-stand" onclick="standBJ()" disabled>Досить</button></div></div>
+            <div id="hilow-p" class="game-panel" style="display:none;"><div class="game-section"><p>Поточна карта: <span id="hl-card" style="font-size:24px; font-weight:bold; color:#ffcc00;">7</span></p><button class="btn" onclick="playHiLow(true)">Вище (-50)</button><button class="btn" onclick="playHiLow(false)">Нижче (-50)</button><p id="hl-res"></p></div></div>
+            <div id="limbo-p" class="game-panel" style="display:none;"><div class="game-section"><p>Цільовий ікс: <input type="number" id="limbo-target" value="2.00" step="0.5" style="width:70px; padding:4px;"></p><button class="btn" onclick="playLimbo()">Ставка (-60)</button><h2 id="limbo-res">1.00x</h2></div></div>
+            <div id="plinko-p" class="game-panel" style="display:none;"><div class="game-section"><p>Кинь кульку в лузу з множником!</p><button class="btn" onclick="playPlinko()">Кинути кульку (-70)</button><h2 id="plinko-res">🔻 | ? |</h2></div></div>
+            <div id="keno-p" class="game-panel" style="display:none;"><div class="game-section"><p>Вгадай виграшну кулю від 1 до 5!</p><select id="keno-val" style="width:60px;"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select><br><button class="btn" onclick="playKeno()">Старт (-50)</button><h3 id="keno-res">🔮</h3></div></div>
+            <div id="scratch-p" class="game-panel" style="display:none;"><div class="game-section"><p>Сотри захисний шар та знайди приз!</p><button class="btn" onclick="playScratch()">Стерти квиток (-90)</button><h2 id="scratch-res">🧼 [ ? ] [ ? ] [ ? ]</h2></div></div>
+            <div id="thimbles-p" class="game-panel" style="display:none;"><div class="game-section"><p>Під яким наперстком діамант?</p><button class="btn" onclick="playThimbles(1)">Наперсток 1</button><button class="btn" onclick="playThimbles(2)">Наперсток 2</button><button class="btn" onclick="playThimbles(3)">Наперсток 3</button><h3 id="thimbles-res">🥛 🥛 🥛</h3></div></div>
+            <div id="zel-p" class="game-panel" style="display:none;"><div class="game-section"><p>Кастомний слот "Президентський Удар"</p><h2 id="zel-res">👑 | 👑 | 👑</h2><button class="btn" onclick="playZelSlot()">Крутанути (-120)</button></div></div>
+
+            <div id="stocks-p" class="game-panel" style="display:none;">
+                <div class="game-section">
+                    <p style="font-size:13px; color:#39ff14; margin:0;">📈 ОНЛАЙН СИМУЛЯТОР БІРЖІ (Ціни оновлюються кожні 3 сек)</p>
+                    <div class="stocks-table-container">
+                        <table class="stocks-table">
+                            <thead><tr><th>Компанія</th><th>Ціна (🪙)</th><th>Зміна</th><th>Дія</th></tr></thead>
+                            <tbody id="stocks-list"></tbody>
+                        </table>
+                    </div>
+                    <div id="portfolio-info" style="margin-top:10px; font-size:12px; color:#aaa;">Твої акції: немає</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-title">💬 МЕТА-ЧАТ ГРАВЦІВ GORILLA CASINO</div>
+            <div class="chat-messages" id="chat-box"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const subs = ["Збирання бананів...", "Налаштування гральних автоматів...", "Закупка гемів...", "Блокування букмекерів..."];
+            let s = 0;
+            const subInterval = setInterval(() => { 
+                const el = document.getElementById('loading-sub');
+                if(el && s < subs.length) el.innerText = subs[s++]; 
+            }, 400);
+
+            setTimeout(() => {
+                clearInterval(subInterval);
+                const ls = document.getElementById('loading-screen');
+                if(ls) {
+                    ls.style.opacity = '0';
+                    setTimeout(() => ls.style.display = 'none', 400);
+                }
+            }, 2000);
+        });
+
+        function formatCard(i) { let v = i.value.replace(/\s+/g,'').replace(/[^0-9]/gi,''); let p = []; for(let j=0; j<v.length; j+=4) p.push(v.substring(j,j+4)); i.value = p.join(' '); }
+        function generateMemeCard() { let num = ""; for(let i=0; i<16; i++) { num += Math.floor(Math.random()*10); if((i+1)%4===0 && i<15) num += " "; } document.getElementById('card-input').value = num; }
+        function goToCard() { if(!document.getElementById('username-input').value.trim()) return alert("Введи свій нікнейм!"); document.getElementById('register-screen').classList.remove('active-screen'); document.getElementById('card-screen').classList.add('active-screen'); }
+        
+        function startGame() { 
+            if(document.getElementById('card-input').value.trim().length < 12) return alert("Номер картки закороткий!");
+            document.getElementById('user-display').innerText = document.getElementById('username-input').value + " (" + document.getElementById('game-select').value + ")";
+            document.getElementById('card-display').innerText = document.getElementById('card-input').value.substring(0,7)+"•••";
+            document.getElementById('card-screen').classList.remove('active-screen'); 
+            document.getElementById('game-screen').classList.add('active-screen');
+            
+            initStocks();
+            setInterval(updateStocks, 3000);
+            setInterval(simulateChat, 1200);
+            generateInitialChat();
+        }
+        
+        function switchGame(id, b) { document.querySelectorAll('.game-panel').forEach(p=>p.style.display='none'); document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.remove('active')); document.getElementById(id).style.display='block'; b.classList.add('active'); }
+
+        let bal = 1000;
+        function updBal(a) { bal += a; document.getElementById('balance').innerText = bal; if(bal < 30) { alert("Грант від Gorilla Casino: Тобі нараховано 1000 анти-кризових монет!"); bal = 1000; document.getElementById('balance').innerText = bal; } }
+
+        // ІГРИ
+        function playSlots() { updBal(-50); const p=['🦍','💎','👑','🔪','💩']; let r1=p[Math.floor(Math.random()*5)], r2=p[Math.floor(Math.random()*5)], r3=p[Math.floor(Math.random()*5)]; document.getElementById('s1').innerText=r1; document.getElementById('s2').innerText=r2; document.getElementById('s3').innerText=r3; let s=document.getElementById('s-res'); if(r1===r2&&r2===r3){ updBal(1000); s.innerText="ДЖЕКПОТ! +1000 👑"; }else if(r1===r2||r2===r3||r1===r3){ updBal(120); s.innerText="Пара! +120 🪙"; }else{ s.innerText="Мінус труси! 🩲"; } }
+        let rInt, rM=1.00, rC=0, rF=false;
+        function startRocket() { if(rF) return; rF=true; updBal(-100); rM=1.00; rC=(Math.random()*4+1.1).toFixed(2); document.getElementById('r-start').disabled=true; document.getElementById('r-cash').disabled=false; rInt=setInterval(()=>{ rM+=0.06; document.getElementById('multiplier').innerText=rM.toFixed(2)+"x"; let p=(rM-1)*15; document.getElementById('rocket').style.bottom=(10+p)+"px"; document.getElementById('rocket').style.left=(10+p*2)+"px"; if(rM>=rC){ clearInterval(rInt); rF=false; document.getElementById('multiplier').innerText="💥 БАБАХ "+rC+"x"; document.getElementById('r-start').disabled=false; document.getElementById('r-cash').disabled=true; } },100); }
+        function cashoutRocket() { if(!rF) return; clearInterval(rInt); rF=false; let w=Math.round(100*rM); updBal(w); alert(`Забрав на ${rM.toFixed(2)}x! +${w}`); document.getElementById('r-start').disabled=false; document.getElementById('r-cash').disabled=true; }
+        let mPos=[], mCl=0, mAct=false;
+        function startMines() { updBal(-100); mPos=[]; mCl=0; mAct=true; document.getElementById('m-start').disabled=true; document.getElementById('m-cash').disabled=false; let b=document.getElementById('m-board'); b.innerHTML=''; while(mPos.length<3){let r=Math.floor(Math.random()*16); if(!mPos.includes(r))mPos.push(r);} for(let i=0;i<16;i++){ let c=document.createElement('div'); c.className='mine-cell'; c.onclick=()=>{ if(!mAct||c.innerText!=='')return; if(mPos.includes(i)){ c.innerText="💥"; mAct=false; document.getElementById('m-start').disabled=false; document.getElementById('m-cash').disabled=true; document.getElementById('m-status').innerText="ПІДІРВАВСЯ!"; }else{ c.innerText="💎"; mCl++; document.getElementById('m-status').innerText=`Куш: ${Math.round(100*(1+mCl*0.5))}`; } }; b.appendChild(c); } }
+        function cashoutMines() { if(!mAct)return; mAct=false; let w=Math.round(100*(1+mCl*0.5)); updBal(w); document.getElementById('m-start').disabled=false; document.getElementById('m-cash').disabled=true; document.getElementById('m-status').innerText=`Забрав +${w}!`; }
+        function playCase() { updBal(-150); const items=["💩 Помийний скін","💎 300 Гемів","🔪 НІЖ КРАСАВА","👑 Автограф Зелі"]; setTimeout(()=>{ let r=items[Math.floor(Math.random()*items.length)]; document.getElementById('c-res').innerText=r; if(r.includes("НІЖ")||r.includes("Автограф")) updBal(500); },600); }
+        function playWheel() { updBal(-75); setTimeout(()=>{ let m=[0, 0.5, 1.5, 3.0][Math.floor(Math.random()*4)]; document.getElementById('w-res').innerText=`🎯 ${m.toFixed(2)}x`; updBal(Math.round(75*m)); },500); }
+        function playFlip() { updBal(-100); setTimeout(()=>{ let s=Math.random()<0.5?"👑":"🩲"; document.getElementById('f-res').innerText=s; if(s===document.getElementById('f-choice').value){ updBal(200); } },400); }
+        function playDice() { updBal(-80); let n=Math.floor(Math.random()*100)+1; document.getElementById('d-res').innerText="🎲 "+n; if(n>50) updBal(160); }
+
+        let bjPl=0, bjDl=0;
+        function startBJ() { updBal(-100); bjPl=Math.floor(Math.random()*10)+11; bjDl=Math.floor(Math.random()*8)+12; document.getElementById('bj-score').innerText=`Твої карти: ${bjPl} | Дилер: ?`; document.getElementById('bj-hit').disabled=false; document.getElementById('bj-stand').disabled=false; document.getElementById('bj-start').disabled=true; }
+        function hitBJ() { bjPl+=Math.floor(Math.random()*6)+1; if(bjPl>21){ document.getElementById('bj-score').innerText=`Перебір! У тебе: ${bjPl} (Програш)`; resetBJ(); }else{ document.getElementById('bj-score').innerText=`Твої карти: ${bjPl} | Дилер: ?`; } }
+        function standBJ() { if(bjDl>21 || bjPl>bjDl){ updBal(200); document.getElementById('bj-score').innerText=`Перемога! У тебе: ${bjPl} | Дилер: ${bjDl}`; }else{ document.getElementById('bj-score').innerText=`Програш! У тебе: ${bjPl} | Дилер: ${bjDl}`; } resetBJ(); }
+        function resetBJ() { document.getElementById('bj-hit').disabled=true; document.getElementById('bj-stand').disabled=true; document.getElementById('bj-start').disabled=false; }
+        
+        let hlC=7; function playHiLow(hi) { updBal(-50); let next=Math.floor(Math.random()*13)+1; let win=(hi && next>=hlC) || (!hi && next<=hlC); document.getElementById('hl-card').innerText=next; document.getElementById('hl-res').innerText=win?"Вгадав! +100 🪙":"Мінус бабки!"; if(win) updBal(100); hlC=next; }
+        function playLimbo() { let targetEl = document.getElementById('limbo-target'); if(!targetEl) return; updBal(-60); let t=parseFloat(targetEl.value); let res=(Math.random()*4+1).toFixed(2); document.getElementById('limbo-res').innerText=res+"x"; if(res>=t){ updBal(Math.round(60*t)); } }
+        function playPlinko() { updBal(-70); let m=[0.2, 0.5, 1.0, 2.0, 5.0][Math.floor(Math.random()*5)]; document.getElementById('plinko-res').innerText=`🔻 | Луза: ${m}x |`; updBal(Math.round(70*m)); }
+        function playKeno() { updBal(-50); let r=Math.floor(Math.random()*5)+1; let v=parseInt(document.getElementById('keno-val').value); document.getElementById('keno-res').innerText=`🔮 Випала куля: ${r}`; if(r===v) updBal(230); }
+        function playScratch() { updBal(-90); let r1=Math.random()>0.5?"💎":"💩", r2=Math.random()>0.5?"💎":"💩", r3=Math.random()>0.5?"💎":"💩"; document.getElementById('scratch-res').innerText=`🧼 [ ${r1} ] [ ${r2} ] [ ${r3} ]`; if(r1==="💎"&&r2==="💎"&&r3==="💎") updBal(500); }
+        function playThimbles(n) { updBal(-60); let r=Math.floor(Math.random()*3)+1; if(n===r){ updBal(160); document.getElementById('thimbles-res').innerText="🥛 [💎] 🥛 (Вгадав!)"; }else{ document.getElementById('thimbles-res').innerText="🥛 🥛 [💎] (Пусто!)"; } }
+        function playZelSlot() { updBal(-120); const z=['👑','💰','🩲']; let z1=z[Math.floor(Math.random()*3)], z2=z[Math.floor(Math.random()*3)], z3=z[Math.floor(Math.random()*3)]; document.getElementById('zel-res').innerText=`${z1} | ${z2} | ${z3}`; if(z1==='👑'&&z2==='👑'&&z3==='👑') updBal(2500); }
+
+        /* --- СИМУЛЯТОР БІРЖІ АКЦІЙ (30 КОМПАНІЙ) --- */
+        const companyNames = [
+            "Microsoft", "Google", "Tesla", "Rockstar Games", "Valve", "Epic Games", "Apple", "Sony", "Nintendo", "Ubisoft",
+            "EA Sports", "Netflix", "Meta", "Amazon", "SpaceX", "Intel", "AMD", "Nvidia", "Samsung", "CD Projekt Red",
+            "Steam Hub", "Brawl Corp", "Roblox Int", "Minecraft Ltd", "Sega", "Capcom", "Warner Bros", "Disney", "OpenAI", "Twitter X"
+        ];
+        let stocks = [];
+        let myPortfolio = {};
+
+        function initStocks() {
+            stocks = [];
+            companyNames.forEach(name => {
+                stocks.push({ name: name, price: Math.floor(Math.random()*200)+50, change: 0 });
+                myPortfolio[name] = 0;
+            });
+            renderStocks();
+        }
+
+        function renderStocks() {
+            const list = document.getElementById('stocks-list'); if(!list) return;
+            list.innerHTML = '';
+            stocks.forEach(s => {
+                let cls = s.change >= 0 ? "stock-up" : "stock-down";
+                let sign = s.change >= 0 ? "+" : "";
+                list.innerHTML += `<tr>
+                    <td><b>${s.name}</b></td>
+                    <td>${s.price} 🪙</td>
+                    <td class="${cls}">${sign}${s.change}%</td>
+                    <td>
+                        <button class="btn" style="padding:4px 8px; font-size:10px;" onclick="buyStock('${s.name}')">Купити</button>
+                        <button class="btn" style="padding:4px 8px; font-size:10px; background:#ff0055;" onclick="sellStock('${s.name}')">Продати (${myPortfolio[s.name]})</button>
+                    </td>
+                </tr>`;
+            });
+            let pStr = Object.keys(myPortfolio).filter(k=>myPortfolio[k]>0).map(k=>`${k}: ${myPortfolio[k]}шт`).join(', ');
+            document.getElementById('portfolio-info').innerText = "Твої активи: " + (pStr ? pStr : "немає");
+        }
+
+        function updateStocks() {
+            stocks.forEach(s => {
+                let pct = Math.floor(Math.random()*21) - 10;
+                s.change = pct;
+                s.price = Math.max(10, Math.round(s.price * (1 + pct/100)));
+            });
+            renderStocks();
+        }
+
+        function buyStock(name) {
+            let s = stocks.find(x => x.name === name);
+            if(bal < s.price) return alert("Не вистачає монет!");
+            bal -= s.price; myPortfolio[name]++; renderStocks(); document.getElementById('balance').innerText = bal;
+        }
+        function sellStock(name) {
+            if(!myPortfolio[name] || myPortfolio[name] <= 0) return alert("У тебе немає цих акцій!");
+            let s = stocks.find(x => x.name === name);
+            bal += s.price; myPortfolio[name]--; renderStocks(); document.getElementById('balance').innerText = bal;
+        }
+
+        /* --- ВЕЛИЧЕЗНА БАЗА ШІ-ГРАВЦІВ (ЧАТ) --- */
+        const fakeUsers = [
+            "BrawlPro_2014", "Robloxer_X", "KnifeKing_CS", "Zelya_Fan", "Anti_Bookmaker", "Pasha_Brawl", "Sanya_Top",
+            "MinesMaster", "CrashGod", "Donater_666", "Sigma_Malchik", "Leon_Scam", "Rick_Roll", "Tufli_Zeli", "Dota_Lover",
+            "Nikitka_Bravler", "Slooot_Monster", "Vanya_Trusi", "Cheat_Code", "Noobik_Roblox", "Global_CS2", "Stepan_Giga",
+            "Wolf_WallStreet", "Musk_Vbivec", "Invest_Brat", "Crypto_Gus", "Gabe_Newell_Real", "Epic_Tim", "Bill_Gates_Meme",
+            "Sony_Boy", "Minecraft_Stiv", "Ronaldo_Brawl", "Ksenia_Слот", "Rik_Invest", "Skamer_З_Одеси"
+        ];
+        
+        const fakeTexts = [
+            "Пацани, я закупив акції Rockstar Games перед релізом нового шедевру! Скоро буду мільйонером! 📈🚀",
+            "Блін, акції Tesla впали на 10%! Ілон Маск, ти що твориш в твіттері? 🤬",
+            "Залутав в Блекджек 21 з першої роздачі! Казино просто космос! 🃏",
+            "Слот Зеля щойно насипав мені три мішки золота! +2500 монет на базу 👑💰",
+            "Букмекери ридають, я підняв банк на акціях Майкрософт і злив їх на хаях!",
+            "У Плінко кулька впала на 5.0х! Оце так лаки! 🔺",
+            "Наперстки — це чистий розводняк для нубів, а ота Ракета це тема! 😎",
+            "Хтось пробував Скретч-карти? Я стер три діаманти підряд! 🧼💎",
+            "Акції Valve ростуть як шалені, Гейб Ньюелл знову купує золотий унітаз.",
+            "Казино Gorilla Casino — це офіційно найкращий симулятор 2026 року!",
+            "Продав останні труси, щоб купити акції Epic Games... Чекаю на ікси 🩲📈",
+            "У Лімбо виставив ціль 4.0х і воно видало 4.1! Я ледь інфаркт не схопив!",
+            "Трейдери, що там по Гуглу? Купувати чи чекати падіння?",
+            "Ха-ха, боти в чаті знову злили баланс на ракетах, а я сиджу в акціях Apple і кайфую.",
+            "Кастомний ніж у кейсах реально існує! Я щойно вибив його! 🔪",
+            "Горилла на логотипі дивиться на мене як на успішного інвестора. 🦍",
+            "Казино дало новий грант пацанам, бігом залітайте в Кості! 🎲",
+            "У Кено вгадав кулю номер 4! Оце підгон на вечір!"
+        ];
+
+        function generateInitialChat() {
+            const chatBox = document.getElementById('chat-box'); if(!chatBox) return;
+            chatBox.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const u = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+                const t = fakeTexts[Math.floor(Math.random() * fakeTexts.length)];
+                chatBox.innerHTML += `<div class="msg"><span class="msg-user">${u}:</span> <span class="msg-text">${t}</span></div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function simulateChat() {
+            const chatBox = document.getElementById('chat-box'); if(!chatBox) return;
+            const u = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+            const t = fakeTexts[Math.floor(Math.random() * fakeTexts.length)];
+            const m = document.createElement('div'); m.className = 'msg';
+            m.innerHTML = `<span class="msg-user">${u}:</span> <span class="msg-text">${t}</span>`;
+            chatBox.appendChild(m); chatBox.scrollTop = chatBox.scrollHeight;
+            if (chatBox.children.length > 10) chatBox.removeChild(chatBox.children[0]);
+        }
+    </script>
+</body>
+</html>
